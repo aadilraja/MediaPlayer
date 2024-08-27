@@ -1,0 +1,127 @@
+#borderPane
+{
+    -fx-background-color: #E5E1D5;
+}
+#vbox
+{
+    -fx-background-color: #FDFFE8;
+    -fx-effect:dropshadow(two-pass-box, rgba(0, 0, 0, 0.25), 0, 3, 0, -1);
+
+}
+#slider > .track
+{
+    -fx-background-color: #acacac;
+
+}
+
+#slider > .thumb
+{
+    -fx-background-color:#121212;
+
+
+}
+#VolumeSlider > .track
+{
+    -fx-background-color: #acacac;
+
+}
+
+#VolumeSlider > .thumb
+{
+    -fx-background-color:#121212;
+
+
+}
+#PlayOrPause
+{
+    -fx-padding:22;
+
+    -fx-background-color:#FFFDF3;
+    -fx-border-width:2;
+    -fx-border-color: #000000;
+    -fx-background-radius:22;
+    -fx-border-radius:22;
+    -fx-background-repeat: stretch;
+
+    -fx-background-position: center;
+
+}
+
+
+#NextButton {
+    -fx-pref-width: 33;
+    -fx-pref-height: 33;
+    -fx-shape: "M44.9267 24.3968C47.51 25.9658 47.4869 29.7227 44.8845 31.2597L6.71161 53.8065C4.0357 55.387 0.658338 53.4455 0.677447 50.3377L0.957592 4.77662C0.976701 1.66886 4.37768 -0.23091 7.03396 1.3824L44.9267 24.3968Z";
+    -fx-background-color: black;
+    -fx-border-color: rgba(0, 0, 0, 0.86);
+    -fx-border-width: 1;
+
+    -fx-transition:background-color 2s, effect 2s;
+}
+#NextButton:hover
+{
+    -fx-background-color:  #FFFDF3;
+    -fx-effect:dropshadow(three-pass-box, #8a8a8a, 0, 5,0,0 );
+
+
+
+
+
+
+
+}
+#PrevButton
+{
+    fx-pref-width:33;
+    -fx-pref-height:33;
+    -fx-shape: "M1.90179 29.7673C-0.672571 28.1839 -0.628354 24.4271 1.98256 22.9047L40.2816 0.57291C42.9664 -0.992548 46.3328 0.967855 46.2962 4.07547L45.76 49.6343C45.7234 52.7419 42.3118 54.6225 39.6646 52.9943L1.90179 29.7673Z" ;
+    -fx-background-color:black;
+    -fx-border-color: rgba(0, 0, 0, 0.81);
+    -fx-border-width: 1;
+    -fx-transition:background-color 3s, effect 3s;
+
+
+}
+#PrevButton:hover
+{
+    -fx-background-color:  #FFFDF3;
+    -fx-effect:dropshadow(one-pass-box, #8a8a8a, 0, 3,0,0 );
+
+
+}
+
+
+#menuBar
+{
+    -fx-background-color:#FDFFE8 ;
+    -fx-effect:dropshadow(two-pass-box, rgba(0, 0, 0, 0.25), 0, 3, 0, 1);
+
+
+}
+#SpeedChoice
+{
+    -fx-background-color: #FFFDF3;
+    -fx-border-color:black;
+    -fx-border-width:1;
+    -fx-border-radius:6;
+    -fx-effect:dropshadow(two-pass-box, rgba(0, 0, 0, 0.25), 0, 3, 0, 0);
+
+}
+#backwards
+{
+    -fx-background-color:#FDFFE8 ;
+    -fx-background-repeat: stretch;
+
+    -fx-background-position: center;
+
+
+
+}
+#forward
+{
+    -fx-background-color:#FDFFE8 ;
+    -fx-background-repeat: stretch;
+
+    -fx-background-position: center;
+
+}

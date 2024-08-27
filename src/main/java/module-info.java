@@ -8,4 +8,8 @@ module sample {
 
     opens org.openjfx to javafx.fxml;
     exports org.openjfx;
+    exports org.openjfx.Controller;
+    opens org.openjfx.Controller to javafx.fxml;
+
+
 }
