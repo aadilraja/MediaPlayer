@@ -1,3 +1,28 @@
+
+
+.label
+{
+   -fx-font-family: "Arial", serif;
+    -fx-font-weight: 500;
+
+}
+#SelectMediaDirectlyText
+{
+    -fx-font-weight: 700;
+    -fx-text-fill: #1B8991;
+    -fx-underline:false ;
+    -fx-font-size:27px;
+    -fx-transition: underline 5s;
+}
+#SelectMediaDirectlyText:hover {
+    -fx-font-size: 27px;
+
+
+
+    -fx-underline: true;
+
+}
+
 #borderPane
 {
     -fx-background-color: #E5E1D5;
@@ -118,6 +143,14 @@
 
 }
 #forward
+{
+    -fx-background-color:#FDFFE8 ;
+    -fx-background-repeat: stretch;
+
+    -fx-background-position: center;
+
+}
+#speaker
 {
     -fx-background-color:#FDFFE8 ;
     -fx-background-repeat: stretch;

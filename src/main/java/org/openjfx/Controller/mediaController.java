@@ -1,13 +1,18 @@
 package org.openjfx.Controller;
+import org.openjfx.util.*;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -34,11 +39,13 @@ public class mediaController implements Initializable {
     public  boolean isPlaying = false;
     Map<String, Double> SpeedVal= Map.of("0.5x",0.5,"0.75x",0.75,"Normal",1.0,"1.5x",1.5,"1.75",1.75,"2x",2.0);
 
-    List<File> files = new ArrayList<>();
+   public List<File> files = new ArrayList<>();
     public int index = 0;
     ContextMenu contextMenu = new ContextMenu();
-    ImageView playIcon, pauseIcon,backIcon,forwardIcon,defaultAudioImg;
+    handleError hE;
+    ImageView playIcon, pauseIcon,backIcon,forwardIcon,defaultAudioImg,speakerIcon,MuteSpeakerIcon;
     Alert alert;
+    Stage stage;
 
 
 
@@ -46,7 +53,7 @@ public class mediaController implements Initializable {
 
 
     @FXML
-    MediaView mediaView;
+   public MediaView mediaView;
     @FXML
     Slider slider;
     @FXML
@@ -61,17 +68,26 @@ public class mediaController implements Initializable {
     @FXML
     MenuBar menuBar;
     @FXML
-    BorderPane borderPane;
+   public BorderPane borderPane;
     @FXML
     VBox vbox;
     @FXML
     HBox hbox1,hbox2;
     @FXML
-    StackPane centerPane;
+  public   StackPane centerPane;
     @FXML
     Button backwards;
     @FXML
     Button forward;
+    @FXML
+    AnchorPane DragAndDrop;
+
+    @FXML
+    Label SelectMediaDirectlyText;
+    @FXML
+    Button speaker;
+
+
 
 
 
@@ -87,52 +103,8 @@ public class mediaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
-        Image defaultaudio=new Image((Objects.requireNonNull(getClass().getResourceAsStream("/images/audioDefault.png"))));
-        defaultAudioImg=new ImageView(defaultaudio);
-
-
-
-        Image playIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/playIcon.png")).toExternalForm());
-        Image PauseIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/Group 3.png")).toExternalForm());
-
-        playIcon = new ImageView(playIconImg);
-        pauseIcon=new ImageView(PauseIconImg);
-
-
-        playIcon.fitHeightProperty().bind(PlayOrPause.heightProperty().multiply(0.7));
-        playIcon.fitWidthProperty().bind(PlayOrPause.widthProperty().multiply(0.7));
-        playIcon.setPreserveRatio(true);
-
-        pauseIcon.fitHeightProperty().bind(PlayOrPause.heightProperty().multiply(0.5));
-        pauseIcon.fitWidthProperty().bind(PlayOrPause.widthProperty().multiply(0.5));
-        pauseIcon.setPreserveRatio(true);
-
-        PlayOrPause.setGraphic(pauseIcon);
-
-
-        Image backwardIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/backwordIcon.png")).toExternalForm());
-
-        backIcon = new ImageView(backwardIconImg);
-        backIcon.fitHeightProperty().bind(backwards.heightProperty());
-        backIcon.fitWidthProperty().bind(backwards.widthProperty());
-        backIcon.setPreserveRatio(true);
-        backwards.setGraphic(backIcon);
-
-        Image forwardIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/forwardIcon.png")).toExternalForm());
-
-        forwardIcon = new ImageView(forwardIconImg);
-        forwardIcon.fitHeightProperty().bind(forward.heightProperty());
-        forwardIcon.fitWidthProperty().bind(forward.widthProperty());
-        forwardIcon.setPreserveRatio(true);
-        forward.setGraphic(forwardIcon);
-
-
-
-
-
-        VolumeSlider.setValue(50);
+       hE = new handleError();
+       settingImage();
 
         List<String> sortedKeys = SpeedVal.entrySet()
                 .stream()
@@ -151,13 +123,16 @@ public class mediaController implements Initializable {
         MenuItem addfile = new MenuItem("Add file");
         contextMenu.getItems().addAll(play, pause, addfile);
         play.setOnAction((_) -> play());
-      pause.setOnAction((_) ->pause());
+         pause.setOnAction((_) ->pause());
         addfile.setOnAction((_) -> chooseFile());
-        mediaView.setMouseTransparent(true);
 
-        centerPane.setOnMousePressed((event) -> {
+
+
+
+
+        mediaView.setOnMousePressed((event) -> {
             if (event.isSecondaryButtonDown()) {
-                contextMenu.show(centerPane, event.getScreenX(), event.getScreenY());
+                contextMenu.show(mediaView, event.getScreenX(), event.getScreenY());
             }
             else
             {
@@ -165,7 +140,63 @@ public class mediaController implements Initializable {
             }
         });
         setNodesDisable(true);
+
+        SelectMediaDirectlyText.setOnMouseClicked(_ -> chooseFile());
+
+
+
+        // Initialize the stage after the scene is set
+        Platform.runLater(() -> {
+            stage = (Stage) borderPane.getScene().getWindow();
+            reSize();  // Call reSize() after the stage is initialized
+        });
+        VolumeSlider.valueProperty().addListener((_, _, newValue) -> {
+            if(newValue.doubleValue()!=0)
+            {
+                setSpeakerMute(false);
+
+
+                mediaPlayer.setVolume(newValue.doubleValue()/100);
+
+            }
+            else{
+                setSpeakerMute(true);
+            }
+
+        });
+
     }
+
+    @FXML
+    public void onDragDropped(DragEvent event)
+    {
+        Dragboard dragedMedia = event.getDragboard();
+        if(event.getDragboard().hasFiles())
+        {
+            files.add(dragedMedia.getFiles().getFirst());
+            settingMediaPlayer();
+
+
+
+
+
+        }
+        event.consume();
+
+
+    }
+    @FXML
+    public void onDragOver(DragEvent event)
+    {
+        Dragboard dragMedia = event.getDragboard();
+        if(dragMedia.hasFiles())
+        {
+            event.acceptTransferModes(TransferMode.COPY);
+        }
+        event.consume();
+
+    }
+
 
 
     @FXML
@@ -173,26 +204,28 @@ public class mediaController implements Initializable {
         // File chooser to pick a media file
 
         FileChooser fileChooser = new FileChooser();
+
+
+
+
+
         fileChooser.setTitle("Open Media File");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "/Downloads"));
-        File file = fileChooser.showOpenDialog(null);
+        File file = fileChooser.showOpenDialog(borderPane.getScene().getWindow());
 
 
 
         if (file != null) {
             files.addLast(file);
 
+
+
             if (mediaPlayer == null || mediaPlayer.getStatus() == MediaPlayer.Status.STOPPED || mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
-                setNodesDisable(false);
                 settingMediaPlayer();
             }
 
 
 
-        }else {
-
-
-            setNodesDisable(true);
         }
     }
     @FXML
@@ -211,15 +244,12 @@ public class mediaController implements Initializable {
         {
 
             if (mediaPlayer == null || mediaPlayer.getStatus() == MediaPlayer.Status.STOPPED || mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
-                setNodesDisable(false);
                 settingMediaPlayer();
             }
 
 
 
 
-        }else {
-            setNodesDisable(true);
         }
         
 
@@ -233,17 +263,41 @@ public class mediaController implements Initializable {
 
 
 
-    private void settingMediaPlayer() {
+    public void settingMediaPlayer() {
         // Initialize the media and media player after selecting a valid file
         reSize();
-        Stage stage=(Stage) borderPane.getScene().getWindow();
+        setNodesDisable(false);
+
+        DragAndDrop.setVisible(false);
+        DragAndDrop.setDisable(true);
+
+
+
+
         if(index<files.size()) {
+            if (mediaPlayer != null) {
+                mediaPlayer.dispose();
+            }
+
+            Platform.runLater(() -> {
+                try {
+                    Thread.sleep(100); // Small delay before loading new media
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // Rest of your settingMediaPlayer code...
+            });
 
 
             path = files.get(index).toURI().toString();
 
 
             media = new Media(path);
+            media.setOnError(() -> {
+                System.out.println("Media Error: " + media.getError().getMessage());
+               hE.handleMediaError("Error loading media");
+            });
 
 
 
@@ -259,7 +313,9 @@ public class mediaController implements Initializable {
             mediaPlayer.setOnReady(() -> {
                 String fileName=files.get(index).getName();
                 stage.setTitle(fileName);
+                VolumeSlider.setValue(50);
                 mediaPlayer.setVolume(0.5);
+
 
                 if (isAudioFile(fileName)) {
                     mediaView.setVisible(false);
@@ -275,24 +331,15 @@ public class mediaController implements Initializable {
                     centerPane.getChildren().add(mediaView);
                 }
 
-
-
-
                 setVideoTime();
                 play();
-
                 setVolumeSlider(0.0);
 
             });
             mediaPlayer.setOnError(() -> {
                 System.out.println("Media Player Error: " + mediaPlayer.getError().getMessage());
 
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Media Player Error");
-                alert.setHeaderText("Some error occurred while playing media file");
-                alert.setContentText("Restart the application");
-                alert.showAndWait();
-                files.clear();
+               hE.handleMediaError("Error loading media");
                 setNodesDisable(true);
 
             });
@@ -355,9 +402,11 @@ public class mediaController implements Initializable {
         }
         else
         {
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("There is no next media ");
-            alert.showAndWait();
+
+          hE.QueueError("All the songs in the queue have been played");
+          index=0;
+          settingMediaPlayer();
+
         }
 
     }
@@ -425,22 +474,50 @@ public class mediaController implements Initializable {
     }
 
 
+    @FXML
+    public void SpeakerState()
+    {
+        setSpeakerMute(!mediaPlayer.isMute());
+
+    }
+
+
+
+
+
+    public void setSpeakerMute(boolean mute)
+    {
+        if (mute)
+        {
+            mediaPlayer.setMute(true);
+            speaker.setGraphic(MuteSpeakerIcon);
+            VolumeSlider.setValue(0);
+
+        }
+        else
+        {
+            mediaPlayer.setMute(false);
+            speaker.setGraphic(speakerIcon);
+            setVolumeSlider(0.0);
+        }
+    }
+
+
 
     public void setVolumeSlider(double vol) {
-        mediaPlayer.setVolume(mediaPlayer.getVolume()+vol);
-        VolumeSlider.setValue(VolumeSlider.getValue()+(vol*10));
-        VolumeSlider.valueProperty().addListener((_, _, newValue) -> {
-            if(newValue.doubleValue()==0)
-            {
-                mediaPlayer.setMute(true);
-            }
-            else{
-                mediaPlayer.setMute(false);
 
-            mediaPlayer.setVolume(newValue.doubleValue()/100);
-            }
+        double PlayerVolume = mediaPlayer.getVolume();
+        double newVolume = PlayerVolume + vol;
 
-        });
+        if (newVolume > 1.0) {
+            newVolume = 1.0;
+        } else if (newVolume < 0.0) {
+            newVolume = 0.0;
+        }
+
+        mediaPlayer.setVolume(newVolume);
+        VolumeSlider.setValue(newVolume * 100);
+
 
     }
 
@@ -450,18 +527,20 @@ public class mediaController implements Initializable {
 
         scene.setOnKeyPressed(event -> {
            KeyCode keyAction = event.getCode();
-                event.consume();
+           event.consume();
+
           switch (keyAction) {
               case SPACE: playOrPause();
                           break;
               case UP: setVolumeSlider(0.1);
                         break;
               case DOWN: setVolumeSlider(-0.1);
+
                         break;
-              case LEFT: jump(false);
+              case LEFT:jumpForward();
                          break;
 
-              case RIGHT: jump(true);
+              case RIGHT: JumpBackwards();
                           break;
 
           }
@@ -472,32 +551,28 @@ public class mediaController implements Initializable {
 
 
     }
-    public void jump(boolean Forward) {
-        Duration currentTime = mediaPlayer.getCurrentTime();
-        Duration jumpTime = Duration.seconds(20.0);
-        Duration newTime;
+    @FXML
+    public void jumpForward()
+    {
 
-        if (Forward) {
-            newTime = currentTime.add(jumpTime);
+        mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(10)));
 
-        } else {
-            newTime = currentTime.subtract(jumpTime);
-            if (newTime.lessThan(Duration.ZERO)) {
-                newTime = Duration.ZERO; // Prevent seeking to a negative time
-            }
-        }
 
-        // Ensure the new time is within the media duration
-        if (newTime.greaterThan(mediaPlayer.getTotalDuration())) {
-            newTime = mediaPlayer.getTotalDuration();
-        }
 
-        Duration finalNewTime = newTime;
-        Platform.runLater(() -> {
-            mediaPlayer.seek(finalNewTime);
-            slider.setValue(finalNewTime.toSeconds());
-        });
+
+
     }
+    @FXML
+    public void JumpBackwards()
+    {
+
+        mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.seconds(10)));
+
+
+
+
+    }
+
 
 
 
@@ -505,7 +580,7 @@ public class mediaController implements Initializable {
     public void playOrPause() {
 
 
-        if(!isPlaying)
+        if(mediaPlayer.getStatus()==MediaPlayer.Status.PAUSED)
         {
             play();
         }
@@ -517,12 +592,21 @@ public class mediaController implements Initializable {
     }
 
     public void play() {
-        if (mediaPlayer != null) {
-            mediaPlayer.play();
-            isPlaying = true;
-            PlayOrPause.setGraphic(playIcon);
+        try {
+            if (mediaPlayer != null) {
+                mediaPlayer.play();
+
+                PlayOrPause.setGraphic(pauseIcon);
+
+            }
+
+
+        }catch (Exception e) {
+            System.out.println("Error in setVideoTime(): " + e.getMessage());
+           hE.handleMediaError("Error playing next media");
 
         }
+
     }
 
 
@@ -530,7 +614,7 @@ public class mediaController implements Initializable {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
             isPlaying = false;
-            PlayOrPause.setGraphic(pauseIcon);
+            PlayOrPause.setGraphic(playIcon);
 
 
         }
@@ -539,16 +623,86 @@ public class mediaController implements Initializable {
 
     public void reSize()
     {
-        centerPane.prefWidthProperty().bind(centerPane.getScene().widthProperty());
+        mediaView.fitWidthProperty().bind(stage.widthProperty().subtract(10.0));
+        mediaView.fitHeightProperty().bind(stage.heightProperty().subtract(10.0));
 
-       mediaView.fitWidthProperty().bind(centerPane.widthProperty().subtract(20.5));
-       mediaView.fitHeightProperty().bind(centerPane.heightProperty());
+
        mediaView.setPreserveRatio(true);
     }
     public void setNodesDisable(boolean fileSelected)
     {
        vbox.setDisable(fileSelected);
     }
+
+
+
+    public  void settingImage()
+    {
+
+        Image defaultaudio=new Image((Objects.requireNonNull(getClass().getResourceAsStream("/images/audioDefault.png"))));
+        defaultAudioImg=new ImageView(defaultaudio);
+
+
+
+        Image playIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/playIcon.png")).toExternalForm());
+        Image PauseIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/Group 3.png")).toExternalForm());
+
+        playIcon = new ImageView(playIconImg);
+        pauseIcon=new ImageView(PauseIconImg);
+
+
+        playIcon.fitHeightProperty().bind(PlayOrPause.heightProperty().multiply(0.7));
+        playIcon.fitWidthProperty().bind(PlayOrPause.widthProperty().multiply(0.7));
+        playIcon.setPreserveRatio(true);
+
+        pauseIcon.fitHeightProperty().bind(PlayOrPause.heightProperty().multiply(0.5));
+        pauseIcon.fitWidthProperty().bind(PlayOrPause.widthProperty().multiply(0.5));
+        pauseIcon.setPreserveRatio(true);
+
+        PlayOrPause.setGraphic(pauseIcon);
+
+
+        Image backwardIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/backwordIcon.png")).toExternalForm());
+
+        backIcon = new ImageView(backwardIconImg);
+        backIcon.fitHeightProperty().bind(backwards.heightProperty());
+        backIcon.fitWidthProperty().bind(backwards.widthProperty());
+        backIcon.setPreserveRatio(true);
+        backwards.setGraphic(backIcon);
+
+        Image forwardIconImg=new Image(Objects.requireNonNull(getClass().getResource("/images/forwardIcon.png")).toExternalForm());
+
+        forwardIcon = new ImageView(forwardIconImg);
+        forwardIcon.fitHeightProperty().bind(forward.heightProperty());
+        forwardIcon.fitWidthProperty().bind(forward.widthProperty());
+        forwardIcon.setPreserveRatio(true);
+        forward.setGraphic(forwardIcon);
+
+
+        speakerIcon =new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/images/speaker1.png")).toExternalForm()));
+        MuteSpeakerIcon=new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/images/speaker.png")).toExternalForm()));
+
+        speakerIcon.fitHeightProperty().bind(speaker.heightProperty());
+        speakerIcon.fitWidthProperty().bind(speaker.widthProperty());
+
+        MuteSpeakerIcon.fitHeightProperty().bind(speaker.heightProperty());
+        MuteSpeakerIcon.fitWidthProperty().bind(speaker.widthProperty());
+
+        speakerIcon.setPreserveRatio(true);
+        MuteSpeakerIcon.setPreserveRatio(true);
+
+        speaker.setGraphic(speakerIcon);
+
+
+
+
+
+
+
+    }
+
+
+
 
 
 
