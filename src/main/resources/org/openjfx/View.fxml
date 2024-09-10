@@ -21,92 +21,99 @@
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="586.0" prefWidth="839.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.Controller.mediaController">
 
 
-   <!-- MediaView in the center of the BorderPane -->
-   <center>
-       <StackPane fx:id="centerPane" onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="498.0" prefWidth="839.0">
-           <MediaView fx:id="mediaView" />
-         <AnchorPane fx:id="DragAndDrop" prefHeight="200.0" prefWidth="200.0">
-            <children>
-               <ImageView fitHeight="209.0" fitWidth="314.0" layoutX="250.0" layoutY="87.0">
-                  <image>
-                     <Image url="@../../images/downloadImg.png" />
-                  </image>
-               </ImageView>
-               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="234.0" layoutY="311.0" style="-fx-font-weight: 700; -fx-text-fill: #1B8991;" text="Drag" textAlignment="CENTER">
-                  <font>
-                     <Font size="27.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="298.0" layoutY="311.0" style="-fx-font-weight: 700;" text="And" textAlignment="CENTER">
-                  <font>
-                     <Font size="27.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="347.0" layoutY="311.0" style="-fx-font-weight: 700; -fx-text-fill: #1B8991;" text=" Drop" textAlignment="CENTER">
-                  <font>
-                     <Font size="27.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="421.0" layoutY="311.0" style="-fx-font-weight: 700;" text="the Media file" textAlignment="CENTER">
-                  <font>
-                     <Font size="27.0" />
-                  </font>
-               </Label>
-               <Label fx:id="SelectMediaDirectlyText" alignment="CENTER" contentDisplay="CENTER" layoutX="264.0" layoutY="390.0" prefHeight="39.0" prefWidth="296.0" text="Select Media Directly " textAlignment="CENTER">
-                  <font>
-                     <Font size="27.0" />
-                  </font>
-               </Label>
-               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="392.0" layoutY="351.0" style="-fx-font-weight: 700;" text="Or" textAlignment="CENTER">
-                  <font>
-                     <Font size="27.0" />
-                  </font>
-               </Label>
-            </children>
-         </AnchorPane>
-       </StackPane>
+    <!-- MediaView in the center of the BorderPane -->
+    <center>
+        <StackPane fx:id="centerPane" onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="498.0" prefWidth="839.0">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
 
-   </center>
+                <MediaView fx:id="mediaView" />
 
-   <!-- Bottom controls with VBox and resizable elements -->
-   <bottom>
-       <VBox fx:id="vbox" prefHeight="72.0" prefWidth="839.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
-           <HBox fx:id="hbox1">
-               <Slider fx:id="slider" blockIncrement="0.0" majorTickUnit="100.0" prefHeight="0.0" prefWidth="784.0" HBox.hgrow="ALWAYS" />
-               <Label fx:id="timeStamp" prefHeight="18.0" prefWidth="55.0" text="00:00:00" HBox.hgrow="ALWAYS" />
-           </HBox>
-           <HBox fx:id="hbox2" alignment="CENTER" style="-fx-alignment: center;">
-               <HBox prefHeight="60.0" prefWidth="372.0" style="-fx-alignment: center;">
-                   <ChoiceBox fx:id="SpeedChoice" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="75.0" />
-               </HBox>
-               <HBox alignment="CENTER" prefHeight="54.0" prefWidth="445.0" spacing="10.0">
-                   <Button fx:id="PrevButton" alignment="CENTER" minHeight="33" minWidth="33" mnemonicParsing="false" onAction="#PlayPrev" />
-                   <Button fx:id="backwards" minHeight="13.0" minWidth="47.0" mnemonicParsing="false" onAction="#JumpBackwards" prefHeight="34.0" prefWidth="48.0" />
-                   <Button fx:id="PlayOrPause" alignment="CENTER" maxHeight="44.0" maxWidth="44.0" minHeight="44.0" minWidth="44.0" onAction="#playOrPause">
-                       <font>
-                           <Font size="13.0" />
-                       </font>
-                   </Button>
-                   <Button fx:id="forward" minHeight="13.0" minWidth="47.0" mnemonicParsing="false" onAction="#jumpForward" prefHeight="34.0" prefWidth="47.0" />
-                   <Button fx:id="NextButton" minHeight="33.0" minWidth="33.0" mnemonicParsing="false" onAction="#PlayNext" />
-               </HBox>
-               <HBox alignment="CENTER" prefHeight="60.0" prefWidth="396.0" spacing="10.0">
-                   <HBox.margin>
-                       <Insets />
-                   </HBox.margin>
-               <Button fx:id="speaker" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#SpeakerState" prefHeight="30.0" prefWidth="30.0" />
-                   <Slider fx:id="VolumeSlider" prefHeight="6.0" prefWidth="98.0" />
-               </HBox>
-           </HBox>
-       </VBox>
-   </bottom>
+            </AnchorPane>
+
+   
+               <AnchorPane fx:id="DragAndDrop" prefHeight="200.0" prefWidth="200.0">
+                <children>
+
+                       <ImageView fitHeight="209.0" fitWidth="314.0" layoutX="250.0" layoutY="87.0">
+                        <image>
+                            <Image url="@../../images/downloadImg.png" />
+                        </image>
+                    </ImageView>
+                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="234.0" layoutY="311.0" style="-fx-font-weight: 700; -fx-text-fill: #1B8991;" text="Drag" textAlignment="CENTER">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="298.0" layoutY="311.0" style="-fx-font-weight: 700;" text="And" textAlignment="CENTER">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="347.0" layoutY="311.0" style="-fx-font-weight: 700; -fx-text-fill: #1B8991;" text=" Drop" textAlignment="CENTER">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="421.0" layoutY="311.0" style="-fx-font-weight: 700;" text="the Media file" textAlignment="CENTER">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="SelectMediaDirectlyText" alignment="CENTER" contentDisplay="CENTER" layoutX="264.0" layoutY="390.0" prefHeight="39.0" prefWidth="296.0" text="Select Media Directly " textAlignment="CENTER">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="392.0" layoutY="351.0" style="-fx-font-weight: 700;" text="Or" textAlignment="CENTER">
+                        <font>
+                            <Font size="27.0" />
+                        </font>
+                    </Label>
+                </children>
+            </AnchorPane>
+        </StackPane>
+
+    </center>
+
+    <!-- Bottom controls with VBox and resizable elements -->
+    <bottom>
+        <VBox fx:id="vbox" prefHeight="72.0" prefWidth="839.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
+            <HBox fx:id="hbox1">
+                <Slider fx:id="slider" blockIncrement="0.0" majorTickUnit="100.0" prefHeight="0.0" prefWidth="784.0" HBox.hgrow="ALWAYS" />
+                <Label fx:id="timeStamp" prefHeight="18.0" prefWidth="55.0" text="00:00:00" HBox.hgrow="ALWAYS" />
+            </HBox>
+            <HBox fx:id="hbox2" alignment="CENTER" style="-fx-alignment: center;">
+                <HBox prefHeight="60.0" prefWidth="372.0" style="-fx-alignment: center;">
+                    <ChoiceBox fx:id="SpeedChoice" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="75.0" />
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="54.0" prefWidth="445.0" spacing="10.0">
+                    <Button fx:id="PrevButton" alignment="CENTER" minHeight="33" minWidth="33" mnemonicParsing="false" onAction="#PlayPrev" />
+                    <Button fx:id="backwards" minHeight="13.0" minWidth="47.0" mnemonicParsing="false" onAction="#JumpBackwards" prefHeight="34.0" prefWidth="48.0" />
+                    <Button fx:id="PlayOrPause" alignment="CENTER" maxHeight="44.0" maxWidth="44.0" minHeight="44.0" minWidth="44.0" onAction="#playOrPause">
+                        <font>
+                            <Font size="13.0" />
+                        </font>
+                    </Button>
+                    <Button fx:id="forward" minHeight="13.0" minWidth="47.0" mnemonicParsing="false" onAction="#jumpForward" prefHeight="34.0" prefWidth="47.0" />
+                    <Button fx:id="NextButton" minHeight="33.0" minWidth="33.0" mnemonicParsing="false" onAction="#PlayNext" />
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="396.0" spacing="10.0">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                    <Button fx:id="speaker" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#SpeakerState" prefHeight="30.0" prefWidth="30.0" />
+                    <Slider fx:id="VolumeSlider" prefHeight="6.0" prefWidth="98.0" />
+                </HBox>
+            </HBox>
+        </VBox>
+    </bottom>
     <top>
         <MenuBar fx:id="menuBar" prefHeight="34.0" prefWidth="839.0">
             <Menu mnemonicParsing="false" text="File">
                 <MenuItem mnemonicParsing="false" onAction="#chooseFile" text="Add File" />
                 <MenuItem mnemonicParsing="false" onAction="#MultiChooseFile" text="Add Multiple files" />
                 <MenuItem mnemonicParsing="false" text="Clear Queue" />
-            <MenuItem mnemonicParsing="false" text="View Queue" />
+                <MenuItem mnemonicParsing="false" onAction="#drawer" text="View Queue" />
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
                 <MenuItem mnemonicParsing="false" text="About" />
@@ -114,6 +121,7 @@
         </MenuBar>
 
     </top>
+  
 
 
 </BorderPane>

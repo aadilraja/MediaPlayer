@@ -39,7 +39,7 @@ public class mediaController implements Initializable {
     public  boolean isPlaying = false;
     Map<String, Double> SpeedVal= Map.of("0.5x",0.5,"0.75x",0.75,"Normal",1.0,"1.5x",1.5,"1.75",1.75,"2x",2.0);
 
-   public List<File> files = new ArrayList<>();
+    public List<File> files = new ArrayList<>();
     public int index = 0;
     ContextMenu contextMenu = new ContextMenu();
     handleError hE;
@@ -52,40 +52,43 @@ public class mediaController implements Initializable {
 
 
 
+
+
     @FXML
-   public MediaView mediaView;
+    public MediaView mediaView;
     @FXML
-    Slider slider;
+    public Slider slider;
     @FXML
     Label timeStamp;
 
     @FXML
-    Slider VolumeSlider;
+    public Slider VolumeSlider;
     @FXML
-    Button PlayOrPause;
+    public Button PlayOrPause;
     @FXML
-    ChoiceBox<String> SpeedChoice;
+    public ChoiceBox<String> SpeedChoice;
     @FXML
     MenuBar menuBar;
     @FXML
-   public BorderPane borderPane;
+    public BorderPane borderPane;
     @FXML
-    VBox vbox;
+    public VBox vbox;
     @FXML
-    HBox hbox1,hbox2;
+    public HBox hbox1,hbox2;
     @FXML
-  public   StackPane centerPane;
+    public   StackPane centerPane;
     @FXML
-    Button backwards;
+    public Button backwards;
     @FXML
-    Button forward;
+    public Button forward;
     @FXML
-    AnchorPane DragAndDrop;
+    public AnchorPane DragAndDrop;
 
     @FXML
-    Label SelectMediaDirectlyText;
+    public Label SelectMediaDirectlyText;
     @FXML
-    Button speaker;
+    public Button speaker;
+
 
 
 
@@ -103,8 +106,15 @@ public class mediaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-       hE = new handleError();
-       settingImage();
+
+
+
+
+
+
+
+        hE = new handleError();
+        settingImage();
 
         List<String> sortedKeys = SpeedVal.entrySet()
                 .stream()
@@ -123,16 +133,16 @@ public class mediaController implements Initializable {
         MenuItem addfile = new MenuItem("Add file");
         contextMenu.getItems().addAll(play, pause, addfile);
         play.setOnAction((_) -> play());
-         pause.setOnAction((_) ->pause());
+        pause.setOnAction((_) ->pause());
         addfile.setOnAction((_) -> chooseFile());
 
 
 
 
-
-        mediaView.setOnMousePressed((event) -> {
+        mediaView.setMouseTransparent(true);
+        centerPane.setOnMousePressed((event) -> {
             if (event.isSecondaryButtonDown()) {
-                contextMenu.show(mediaView, event.getScreenX(), event.getScreenY());
+                contextMenu.show(centerPane, event.getScreenX(), event.getScreenY());
             }
             else
             {
@@ -149,7 +159,11 @@ public class mediaController implements Initializable {
         Platform.runLater(() -> {
             stage = (Stage) borderPane.getScene().getWindow();
             reSize();  // Call reSize() after the stage is initialized
+
         });
+
+
+
         VolumeSlider.valueProperty().addListener((_, _, newValue) -> {
             if(newValue.doubleValue()!=0)
             {
@@ -165,7 +179,9 @@ public class mediaController implements Initializable {
 
         });
 
+
     }
+
 
     @FXML
     public void onDragDropped(DragEvent event)
@@ -191,7 +207,7 @@ public class mediaController implements Initializable {
         Dragboard dragMedia = event.getDragboard();
         if(dragMedia.hasFiles())
         {
-            event.acceptTransferModes(TransferMode.COPY);
+            event.acceptTransferModes(TransferMode.ANY);
         }
         event.consume();
 
@@ -239,7 +255,7 @@ public class mediaController implements Initializable {
         fileChooser.setTitle("Open Media File");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "/Downloads"));
         List<File> fileList = fileChooser.showOpenMultipleDialog(null);
-       files.addAll(fileList);
+        files.addAll(fileList);
         if(!files.contains(null))
         {
 
@@ -251,7 +267,7 @@ public class mediaController implements Initializable {
 
 
         }
-        
+
 
 
 
@@ -267,13 +283,6 @@ public class mediaController implements Initializable {
         // Initialize the media and media player after selecting a valid file
         reSize();
         setNodesDisable(false);
-
-        DragAndDrop.setVisible(false);
-        DragAndDrop.setDisable(true);
-
-
-
-
         if(index<files.size()) {
             if (mediaPlayer != null) {
                 mediaPlayer.dispose();
@@ -296,7 +305,7 @@ public class mediaController implements Initializable {
             media = new Media(path);
             media.setOnError(() -> {
                 System.out.println("Media Error: " + media.getError().getMessage());
-               hE.handleMediaError("Error loading media");
+                hE.handleMediaError("Error loading media");
             });
 
 
@@ -313,8 +322,9 @@ public class mediaController implements Initializable {
             mediaPlayer.setOnReady(() -> {
                 String fileName=files.get(index).getName();
                 stage.setTitle(fileName);
-                VolumeSlider.setValue(50);
                 mediaPlayer.setVolume(0.5);
+                setVolumeSlider(0.0);
+
 
 
                 if (isAudioFile(fileName)) {
@@ -333,13 +343,13 @@ public class mediaController implements Initializable {
 
                 setVideoTime();
                 play();
-                setVolumeSlider(0.0);
+
 
             });
             mediaPlayer.setOnError(() -> {
                 System.out.println("Media Player Error: " + mediaPlayer.getError().getMessage());
 
-               hE.handleMediaError("Error loading media");
+                hE.handleMediaError("Error loading media");
                 setNodesDisable(true);
 
             });
@@ -358,30 +368,23 @@ public class mediaController implements Initializable {
             mediaPlayer.setOnEndOfMedia(() -> {
                 // Play the next media in the queue when the current one finishes
 
-                  if(index<files.size()) {
-                      index = index+1;
-                      settingMediaPlayer();
-                  }
-                    else
-                  {
-                      mediaPlayer.seek(Duration.millis(0));
-                      slider.setValue(0);
-                      pause();
-                  }
+                if(index<files.size()) {
+                    index = index+1;
+                    settingMediaPlayer();
+                }
+                else
+                {
+                    mediaPlayer.seek(Duration.millis(0));
+                    slider.setValue(0);
+                    pause();
+                }
 
 
             });
 
 
         }
-        else
-        {
-             alert = new Alert(Alert.AlertType.INFORMATION);
 
-
-            alert.setContentText("Queue is empty");
-
-        }
     }
     public boolean isAudioFile(String fileName)
     {
@@ -403,9 +406,9 @@ public class mediaController implements Initializable {
         else
         {
 
-          hE.QueueError("All the songs in the queue have been played");
-          index=0;
-          settingMediaPlayer();
+            hE.QueueError("All the songs in the queue have been played");
+            index=0;
+            settingMediaPlayer();
 
         }
 
@@ -519,6 +522,7 @@ public class mediaController implements Initializable {
         VolumeSlider.setValue(newVolume * 100);
 
 
+
     }
 
     public void checKeyPress()
@@ -526,24 +530,28 @@ public class mediaController implements Initializable {
         Scene scene =borderPane.getScene();
 
         scene.setOnKeyPressed(event -> {
-           KeyCode keyAction = event.getCode();
-           event.consume();
 
-          switch (keyAction) {
-              case SPACE: playOrPause();
-                          break;
-              case UP: setVolumeSlider(0.1);
-                        break;
-              case DOWN: setVolumeSlider(-0.1);
+            KeyCode key=event.getCode();
+            event.consume();
 
-                        break;
-              case LEFT:jumpForward();
-                         break;
 
-              case RIGHT: JumpBackwards();
-                          break;
 
-          }
+            switch (key) {
+                case KeyCode.SPACE: playOrPause();
+                    break;
+                case KeyCode.UP: setVolumeSlider(0.1);
+                    break;
+                case KeyCode.DOWN: setVolumeSlider(-0.1);
+                    break;
+                case KeyCode.LEFT:jumpForward();
+                    break;
+
+                case KeyCode.RIGHT: JumpBackwards();
+                    break;
+                default:
+                    break;
+
+            }
 
 
         });
@@ -603,7 +611,7 @@ public class mediaController implements Initializable {
 
         }catch (Exception e) {
             System.out.println("Error in setVideoTime(): " + e.getMessage());
-           hE.handleMediaError("Error playing next media");
+            hE.handleMediaError("Error playing next media");
 
         }
 
@@ -627,11 +635,23 @@ public class mediaController implements Initializable {
         mediaView.fitHeightProperty().bind(stage.heightProperty().subtract(10.0));
 
 
-       mediaView.setPreserveRatio(true);
+        mediaView.setPreserveRatio(true);
     }
-    public void setNodesDisable(boolean fileSelected)
+    public void setNodesDisable(boolean Disable)
     {
-       vbox.setDisable(fileSelected);
+        vbox.setDisable(Disable);
+        DragAndDrop.setVisible(Disable);
+        DragAndDrop.setDisable(!Disable);
+
+    }
+    @FXML
+    public void drawer()
+    {
+
+
+
+
+
     }
 
 
